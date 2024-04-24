@@ -1,14 +1,25 @@
 package com.orderservice.demo.Entities;
 
+import com.dtos.demo.events.OrderState;
+import jakarta.persistence.*;
+
+import java.util.Date;
+
+@Entity
+@Table(name = "Order")
 public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long OrderId;
     Long ProductId;
     int Quantity;
-    String OrderStatus;
+    OrderState OrderStatus;
     double TotalPrice;
     Date Date;
+    public Order() {
 
-    public Order(Long orderId, Long productId, int quantity, String orderStatus, double totalPrice) {
+    }
+    public Order(Long orderId, Long productId, int quantity, OrderState orderStatus, double totalPrice) {
         OrderId = orderId;
         ProductId = productId;
         Quantity = quantity;
@@ -19,7 +30,7 @@ public class Order {
         OrderId = orderId;
         ProductId = productId;
     }
-    public Order(Long orderId, Date date, String orderStatus) {
+    public Order(Long orderId, Date date, OrderState orderStatus) {
         OrderId = orderId;
         Date = date;
         OrderStatus=orderStatus;
@@ -37,7 +48,7 @@ public class Order {
         return Quantity;
     }
 
-    public String getOrderStatus() {
+    public OrderState getOrderStatus() {
         return OrderStatus;
     }
 
@@ -57,7 +68,7 @@ public class Order {
         Quantity = quantity;
     }
 
-    public void setOrderStatus(String orderStatus) {
+    public void setOrderStatus(OrderState orderStatus) {
         OrderStatus = orderStatus;
     }
 

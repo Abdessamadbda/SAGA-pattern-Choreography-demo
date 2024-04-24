@@ -1,29 +1,15 @@
-package com.productservice.demo.Entities;
+package com.orderservice.demo.Entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
-import jakarta.validation.constraints.NotNull;
-
-@Entity
 public class Product {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Product label must be defined")
     private String label;
 
-    @NotNull(message = "Price must be defined")
     private double price;
 
-    @NotNull(message = "Stock must be defined")
     private int stock;
 
-    @NotNull(message = "Description must be defined")
     private String description;
 
     public Product() {

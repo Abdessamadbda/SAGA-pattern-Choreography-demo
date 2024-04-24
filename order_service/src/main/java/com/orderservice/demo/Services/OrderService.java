@@ -1,10 +1,29 @@
 package com.orderservice.demo.Services;
 
-public class OrderService {
+import com.dtos.demo.events.OrderState;
+import com.dtos.demo.events.ProductStockState;
+import com.orderservice.demo.Entities.Order;
+import com.orderservice.demo.Entities.Product;
+import com.orderservice.demo.Proxies.Productproxy;
+import com.orderservice.demo.Repositories.OrderRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Service;
+import com.dtos.demo.events.ProductEvent;
 
+
+@Service
+public class OrderService {
+    @Autowired
+    private Productproxy productproxy;
+    @Autowired
+    private OrderPublisher orderPublisher;
+    @Autowired
+    private OrderRepository orderRepository;
     public Order saveOrderInDB(long prodId, int qnt) {
         // Step 1: Get the product price from the product_service using OpenFeign
-        Product product = productService.getProductById(prodId); // Assuming productService is an instance of Feign client interface
+        Product product = productproxy.getProductByid(prodId);
+        // Assuming productService is an instance of Feign client interface
 
         // Calculate total price
         double totalPrice = product.getPrice() * qnt;
@@ -24,7 +43,7 @@ public class OrderService {
 
     public void updateOrder(ProductEvent prdct) {
         long orderId = prdct.getOrderId();
-        Order order = orderRepository.findByOrderId(orderId).orElse(null); // Assuming orderRepository is your JPA repository
+        Order order = orderRepository.findById(orderId).orElse(null); // Assuming orderRepository is your JPA repository
 
         if (order == null) {
             // Handle the case when order is not found
@@ -32,10 +51,10 @@ public class OrderService {
         }
 
         // Step 2: Depending on the received product event, change the order state
-        if (prdct.getType() == ProductEventType.PROCESSING) {
-            order.setStatus(OrderStatus.PROCESSING);
-        } else if (prdct.getType() == ProductEventType.FAILED) {
-            order.setStatus(OrderStatus.FAILED);
+        if (prdct.getStockAvailability() == ProductStockState.AVAILABLE) {
+            order.setOrderStatus(OrderState.CREATED);
+        } else if (prdct.getStockAvailability() == ProductStockState.OUT_OF_STOCK) {
+            order.setOrderStatus(OrderState.FAILED);
         }
 
         // Step 3: Update the DB order data

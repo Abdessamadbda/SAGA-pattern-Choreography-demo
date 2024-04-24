@@ -1,4 +1,17 @@
 package com.orderservice.demo.Proxies;
+import com.orderservice.demo.Entities.Product;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
-public class Productproxy {
+
+@FeignClient(name = "choreography-SAGA-product-service")
+@Component
+public interface Productproxy {
+
+    @GetMapping("/{prodId}")
+    public Product getProductByid(@PathVariable long prodId);
+
 }

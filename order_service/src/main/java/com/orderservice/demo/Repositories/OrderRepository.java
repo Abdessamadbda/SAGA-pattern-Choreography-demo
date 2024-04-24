@@ -1,10 +1,10 @@
 package com.orderservice.demo.Repositories;
 
-public class OrderRepository {
-    Order save(Order order);
-    Order findByOrderId(Long orderId);
-    List<Order> findAll();
-    void delete(Order order);
-    void deleteByOrderId(Long orderId);
-    void deleteAll();
+import com.orderservice.demo.Entities.Order;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface OrderRepository extends JpaRepository<Order, Long> {
+
 }

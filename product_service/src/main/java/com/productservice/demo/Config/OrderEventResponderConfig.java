@@ -1,9 +1,17 @@
 package com.productservice.demo.Config;
 
+import com.dtos.demo.events.OrderEvent;
+import com.dtos.demo.events.ProductEvent;
+import com.dtos.demo.events.ProductStockState;
+import com.productservice.demo.Entities.Product;
 import com.productservice.demo.Repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.util.function.Function;
 
 @Configuration
 
@@ -16,36 +24,21 @@ public class OrderEventResponderConfig {
         return orderEventFlux -> orderEventFlux.flatMap(this::productStockCheck);
     }
 
-    private Mono<ProductEvent> productStockCheck(OrderEvent orderEvent) {
-        // (To do) Get the product from the DB using the orderEvent prodId.
-        return productRepository.findById(orderEvent.getProdId())
-                .flatMap(product -> {
-                    // (To do) Create a ProductStockState variable with an AVAILABLE value if the product item number
-                    // is higher than the orderEvent qnt, else an OUT_OF_STOCK should be assigned.
-                    ProductStockState stockAvailability = product.getQuantity() >= orderEvent.getProdqnt() ?
-                            ProductStockState.AVAILABLE : ProductStockState.OUT_OF_STOCK;
+    private Mono<ProductEvent> productStockCheck(OrderEvent orderEvent){
+        Product product = productRepository.findById(orderEvent.getProdId()).get();
+        ProductStockState stockAvailability = (product.getStock() >= orderEvent.getProdqnt())
+                ? ProductStockState.AVAILABLE : ProductStockState.OUT_OF_STOCK;
+        if(stockAvailability.equals(ProductStockState.AVAILABLE)){
+            product.setStock(product.getStock() - orderEvent.getProdqnt());
+            productRepository.save(product);
+        }
 
-                    // (To do) Subtract the number of items requested from the product available item number.
-                    // Then update the product values in the database.
-                    if (stockAvailability == ProductStockState.AVAILABLE) {
-                        product.setQuantity(product.getQuantity() - orderEvent.getProdqnt());
-                        return productRepository.save(product)
-                                .thenReturn(new ProductEvent(
-                                        orderEvent.getOrderId(),
-                                        orderEvent.getProdId(),
-                                        orderEvent.getProdqnt(),
-                                        stockAvailability
-                                ));
-                    } else {
-                        // If out of stock, just return a ProductEvent indicating unavailability
-                        return Mono.just(new ProductEvent(
-                                orderEvent.getOrderId(),
-                                orderEvent.getProdId(),
-                                orderEvent.getProdqnt(),
-                                stockAvailability
-                        ));
-                    }
-                });
+        ProductEvent productEvent = new ProductEvent(
+                orderEvent.getOrderId(),
+                orderEvent.getProdId(),
+                orderEvent.getProdqnt(),
+                stockAvailability);
+        return Mono.fromSupplier(() -> productEvent);
     }
 
 }
