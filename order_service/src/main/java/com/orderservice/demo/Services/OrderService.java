@@ -30,7 +30,6 @@ public class OrderService {
 
         // Step 2: Create and save the new order in the database
         Order newOrder = new Order();
-        newOrder.setProductId(prodId);
         newOrder.setQuantity(qnt);
         newOrder.setTotalPrice(totalPrice);
         // Save newOrder to the database using your ORM or JDBC

@@ -18,9 +18,9 @@ public class DataInitiator implements
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if(event.getApplicationContext().getParent() == null) {
-            orderRepository.save(new Order(160L, new Date(), OrderState.CREATED));
-            orderRepository.save(new Order(360L, new Date(), OrderState.CREATED));
-            orderRepository.save(new Order(5500L, new Date(), OrderState.CREATED));
+            orderRepository.save(new Order(160, new Date(), OrderState.CREATED));
+            orderRepository.save(new Order(360, new Date(), OrderState.CREATED));
+            orderRepository.save(new Order(5500, new Date(), OrderState.CREATED));
         }
     }
 }

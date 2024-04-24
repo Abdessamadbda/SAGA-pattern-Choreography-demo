@@ -1,36 +1,45 @@
 package com.orderservice.demo.Entities;
 
 import com.dtos.demo.events.OrderState;
-import jakarta.persistence.*;
+
 
 import java.util.Date;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "Order")
+@Table(name = "OrderTable")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long OrderId;
-    Long ProductId;
+    long OrderId;
+
+
+    @NotNull(message = "Quantity must be defined")
+
     int Quantity;
+    @NotNull(message = "OrderStatus must be defined")
+
     OrderState OrderStatus;
+    @NotNull(message = "TotalPrice must be defined")
+
     double TotalPrice;
+    @NotNull(message = "Date must be defined")
+
     Date Date;
     public Order() {
 
     }
-    public Order(Long orderId, Long productId, int quantity, OrderState orderStatus, double totalPrice) {
+    public Order(Long orderId,  int quantity, OrderState orderStatus, double totalPrice) {
         OrderId = orderId;
-        ProductId = productId;
         Quantity = quantity;
         OrderStatus = orderStatus;
         TotalPrice = totalPrice;
     }
-    public Order(Long orderId, Long productId, int quantity) {
+    public Order(long orderId, int quantity) {
         OrderId = orderId;
-        ProductId = productId;
     }
-    public Order(Long orderId, Date date, OrderState orderStatus) {
+    public Order(long orderId, Date date, OrderState orderStatus) {
         OrderId = orderId;
         Date = date;
         OrderStatus=orderStatus;
@@ -40,9 +49,6 @@ public class Order {
         return OrderId;
     }
 
-    public Long getProductId() {
-        return ProductId;
-    }
 
     public int getQuantity() {
         return Quantity;
@@ -60,9 +66,6 @@ public class Order {
         OrderId = orderId;
     }
 
-    public void setProductId(Long productId) {
-        ProductId = productId;
-    }
 
     public void setQuantity(int quantity) {
         Quantity = quantity;
@@ -80,7 +83,6 @@ public class Order {
     public java.lang.String toString() {
         return "Order{" +
                 "OrderId=" + OrderId +
-                ", ProductId=" + ProductId +
                 ", Quantity=" + Quantity +
                 ", OrderStatus='" + OrderStatus + '\'' +
                 ", TotalPrice=" + TotalPrice +
