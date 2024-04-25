@@ -3,89 +3,66 @@ package com.orderservice.demo.Entities;
 import com.dtos.demo.events.OrderState;
 
 
-import java.util.Date;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Entity
 @Table(name = "OrderTable")
 public class Order {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long OrderId;
+    private Long id;
 
+    @NotNull(message = "Data must be defined")
+    private Date dateReceived;
 
-    @NotNull(message = "Quantity must be defined")
+    @NotNull(message = "Price of the order must be defined")
+    private double price;
 
-    int Quantity;
-    @NotNull(message = "OrderStatus must be defined")
+    @NotNull(message = "Description must be defined")
+    private OrderState orderState = OrderState.CREATED;
 
-    OrderState OrderStatus;
-    @NotNull(message = "TotalPrice must be defined")
-
-    double TotalPrice;
-    @NotNull(message = "Date must be defined")
-
-    Date Date;
     public Order() {
-
-    }
-    public Order(Long orderId,  int quantity, OrderState orderStatus, double totalPrice) {
-        OrderId = orderId;
-        Quantity = quantity;
-        OrderStatus = orderStatus;
-        TotalPrice = totalPrice;
-    }
-    public Order(long orderId, int quantity) {
-        OrderId = orderId;
-    }
-    public Order(long orderId, Date date, OrderState orderStatus) {
-        OrderId = orderId;
-        Date = date;
-        OrderStatus=orderStatus;
     }
 
-    public Long getOrderId() {
-        return OrderId;
+    public Order(double price, Date dateReceived, OrderState orederState) {
+        this.price = price;
+        this.dateReceived = dateReceived;
+        this.orderState = orederState;
     }
 
-
-    public int getQuantity() {
-        return Quantity;
+    public Long getId() {
+        return id;
     }
 
-    public OrderState getOrderStatus() {
-        return OrderStatus;
+    public double getPrice() {
+        return price;
     }
 
-    public double getTotalPrice() {
-        return TotalPrice;
+    public OrderState getOrderState() {
+        return orderState;
     }
 
-    public void setOrderId(Long orderId) {
-        OrderId = orderId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-
-    public void setQuantity(int quantity) {
-        Quantity = quantity;
+    public void setPrice(double price) {
+        this.price = price;
     }
 
-    public void setOrderStatus(OrderState orderStatus) {
-        OrderStatus = orderStatus;
+    public void setOrderState(OrderState orderState) {
+        this.orderState = orderState;
     }
 
-    public void setTotalPrice(double totalPrice) {
-        TotalPrice = totalPrice;
+    public Date getDateReceived() {
+        return dateReceived;
     }
 
-    @java.lang.Override
-    public java.lang.String toString() {
-        return "Order{" +
-                "OrderId=" + OrderId +
-                ", Quantity=" + Quantity +
-                ", OrderStatus='" + OrderStatus + '\'' +
-                ", TotalPrice=" + TotalPrice +
-                '}';
+    public void setDateReceived(Date dateReceived) {
+        this.dateReceived = dateReceived;
     }
+
 }

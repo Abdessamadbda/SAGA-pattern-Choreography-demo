@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
-@FeignClientFactory(name = "choreography-SAGA-product-service")
+@FeignClient(name = "choreography-SAGA-product-service")
 public interface Productproxy {
 
     @GetMapping("/{prodId}")

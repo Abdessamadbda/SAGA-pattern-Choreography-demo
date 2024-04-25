@@ -2,61 +2,69 @@ package com.orderservice.demo.Services;
 
 import com.dtos.demo.events.OrderState;
 import com.dtos.demo.events.ProductStockState;
+
+import com.dtos.demo.events.ProductEvent;
+
+
 import com.orderservice.demo.Entities.Order;
 import com.orderservice.demo.Entities.Product;
 import com.orderservice.demo.Proxies.Productproxy;
 import com.orderservice.demo.Repositories.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-import com.dtos.demo.events.ProductEvent;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.Date;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 @Service
 public class OrderService {
+
+    //Product proxy injection
     @Autowired
     private Productproxy productproxy;
-    @Autowired
-    private OrderPublisher orderPublisher;
+
+    //Order repository injection
     @Autowired
     private OrderRepository orderRepository;
-    public Order saveOrderInDB(long prodId, int qnt) {
-        // Step 1: Get the product price from the product_service using OpenFeign
-        Product product = productproxy.getProductByid(prodId);
-        // Assuming productService is an instance of Feign client interface
 
-        // Calculate total price
-        double totalPrice = product.getPrice() * qnt;
+    //Inject the order publisher, which will publish the order event
+    @Autowired
+    private OrderPublisher orderPublisher;
 
-        // Step 2: Create and save the new order in the database
-        Order newOrder = new Order();
-        newOrder.setQuantity(qnt);
-        newOrder.setTotalPrice(totalPrice);
-        // Save newOrder to the database using your ORM or JDBC
+    public Order saveOrderInDB(long prodId, int qnt){
 
-        // Step 3: Publish the order event to the product service
+        //Get the concerned product from the product service using OpenFeign (In order to get the product price)
+        Product prod = productproxy.getProductByid(prodId);
+
+        Order newOrder = new Order(
+                prod.getPrice()*qnt,
+                new Date(),
+                OrderState.PROCESSING);
+
+        // Save order in the database
+        orderRepository.save(newOrder);
+        // Publish the orderEvent to the product service
         orderPublisher.publishOrderEvent(newOrder, prodId, qnt);
-
         return newOrder;
     }
 
-    public void updateOrder(ProductEvent prdct) {
-        long orderId = prdct.getOrderId();
-        Order order = orderRepository.findById(orderId).orElse(null); // Assuming orderRepository is your JPA repository
+    public void updateOrder(ProductEvent prdct){
 
-        if (order == null) {
-            // Handle the case when order is not found
-            return; // Return without updating if order is not found
+        Optional<Order> newOrder = orderRepository.findById(prdct.getOrderId());
+        if(newOrder.isPresent()){
+            System.out.println("++++++++++++++++++++++++++++++++");
+            System.out.println(prdct.getStockAvailability());
+            System.out.println("++++++++++++++++++++++++++++++++");
+            OrderState newOrderState = prdct.getStockAvailability().equals(ProductStockState.AVAILABLE) ?
+                    OrderState.CREATED : OrderState.FAILED;
+
+            newOrder.get().setOrderState(newOrderState);
+            orderRepository.save(newOrder.get());
+
         }
-
-        // Step 2: Depending on the received product event, change the order state
-        if (prdct.getStockAvailability() == ProductStockState.AVAILABLE) {
-            order.setOrderStatus(OrderState.CREATED);
-        } else if (prdct.getStockAvailability() == ProductStockState.OUT_OF_STOCK) {
-            order.setOrderStatus(OrderState.FAILED);
-        }
-
-        // Step 3: Update the DB order data
-        orderRepository.save(order);
     }
+
+
 }
