@@ -1,6 +1,7 @@
 package com.orderservice.demo.Config;
 
 import com.dtos.demo.events.ProductEvent;
+
 import com.orderservice.demo.Services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +15,7 @@ public class ProductEventConsumerConfig {
     private OrderService orderService;
     @Bean
     public Consumer<ProductEvent> productEventConsumer(){
-        return (productEvn) -> orderService.updateOrder(productEvn);
+        return (productEvn) -> orderService.updateOrder(productEvn) ;
     }
 
 }

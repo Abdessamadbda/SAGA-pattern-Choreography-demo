@@ -8,10 +8,10 @@
         <version>2.5.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.order-service</groupId>
+    <groupId>com.payment-service</groupId>
     <artifactId>demo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Choreography-based-SAGA-Order-Service</name>
+    <name>Choreography-based-SAGA-Payment-Service</name>
     <description>Saga choregraphy implementation</description>
     <properties>
         <java.version>11</java.version>
@@ -67,7 +67,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.orderservice</groupId>
+            <groupId>com.paymentservice</groupId>
             <artifactId>demo</artifactId>
             <scope>system</scope>
             <version>0.0.1-SNAPSHOT</version>

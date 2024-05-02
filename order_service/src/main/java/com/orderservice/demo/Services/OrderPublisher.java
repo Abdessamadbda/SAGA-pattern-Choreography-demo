@@ -12,9 +12,9 @@ import reactor.core.publisher.Sinks;
 public class OrderPublisher {
     @Autowired
     private Sinks.Many<OrderEvent> orderSinks;
-    public void publishOrderEvent(Order newOrder, long prodId, int qnt){
+    public void publishOrderEvent(Order newOrder,long userId ,long prodId, int qnt,long paymentId){
         // Create an order event with the necessary data and send it.
-        OrderEvent orderEvent = new OrderEvent(newOrder.getId(), prodId, qnt);
+        OrderEvent orderEvent = new OrderEvent(newOrder.getId(), prodId,qnt,userId,paymentId);
         orderSinks.tryEmitNext(orderEvent);
     }
 

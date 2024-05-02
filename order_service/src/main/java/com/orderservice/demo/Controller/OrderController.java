@@ -46,10 +46,11 @@ public class OrderController {
      * If the product is available, change the order state to PROCESSING.
      * If the product is out of stock we will delete the order.
      * */
-    @GetMapping("/new/{prodId}/{qnt}")
-    public Order createOrder(@PathVariable long prodId, @PathVariable int qnt){
+    @GetMapping("/new/{userId}/{paymentId}/{prodId}/{qnt}")
+    public Order createOrder(@PathVariable long userId, @PathVariable long paymentId,@PathVariable long prodId, @PathVariable int qnt){
         // saveOrder of the order service
-        return orderService.saveOrderInDB(prodId, qnt);
+        return orderService.saveOrderInDB(userId,paymentId,prodId,qnt);
+
     }
 
 }
