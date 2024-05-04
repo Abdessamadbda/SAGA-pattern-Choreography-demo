@@ -15,7 +15,7 @@ public class DataInitiator implements
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if(event.getApplicationContext().getParent() == null) {
-            productRepository.save(new Product("HTC Electric Shaver", 80, 10, "An electric shaver"));
+            productRepository.save(new Product("HTC Electric Shaver", 80, 0, "An electric shaver"));
             productRepository.save(new Product("Arduino Uno", 150, 20,"A microcontroller board"));
             productRepository.save(new Product("Canon EOS M100", 5500, 3,"Canon camera"));
         }

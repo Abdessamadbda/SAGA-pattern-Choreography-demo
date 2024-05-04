@@ -66,7 +66,7 @@ public class OrderService {
         // Save order in the database
         orderRepository.save(newOrder);
         // Publish the orderEvent to the product service
-        orderPublisher.publishOrderEvent(newOrder, prodId,user.getId(), qnt,paymentId);
+        orderPublisher.publishOrderEvent(newOrder, user.getId(),prodId, qnt,paymentId);
         anotherOrderPublisher.publishOrderEvent(newOrder,user.getId(), prodId, qnt,paymentId);
         return newOrder;
         
@@ -97,7 +97,8 @@ public class OrderService {
         System.out.println("++++++++++++++++++++++++++++++++");
         Payment payment1=paymentproxy.getPaymentByid(payment.getOrderId());
         Optional<Order> newOrder = orderRepository.findById(orderId);
-        if(newOrder.isPresent()){
+        Order order=orderRepository.findById(orderId).get();
+        if(newOrder.isPresent() && order.getOrderState().equals(OrderState.PAYMENT_PROCESSING)){
          
             OrderState newOrderState = payment1.getPaymentState().equals(PaymentState.SUCCESSFULL)  ?
                     OrderState.CREATED : OrderState.FAILED;
