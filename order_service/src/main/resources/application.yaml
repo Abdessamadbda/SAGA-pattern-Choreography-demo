@@ -2,13 +2,13 @@ spring:
   cloud:
     stream:
       function:
-        definition: orderSupplier;productEventConsumer;paymentEventConsumer
+        definition: orderSupplier;anotherorderSupplier;productEventConsumer;paymentEventConsumer
       bindings:
         orderSupplier-out-0:
           destination: order-event
-        orderSupplier-out-1:
+        anotherorderSupplier-out-0:
           destination: another-order-event
         productEventConsumer-in-0:
           destination: product-event
         paymentEventConsumer-in-0:
-          destination: payment-event
+          destination: another-payment-event

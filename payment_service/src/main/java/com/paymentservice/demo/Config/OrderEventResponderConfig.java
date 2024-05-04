@@ -31,15 +31,15 @@ public class OrderEventResponderConfig {
         PaymentState paymentState = (payment.getPaymentState().equals(PaymentState.SUCCESSFULL))
                 ? PaymentState.SUCCESSFULL : PaymentState.FAILED;
         System.out.println(payment.getPaymentState());
-        AnotherPaymentEvent paymentEvent = new AnotherPaymentEvent(
+        System.out.println(orderEvent.getPaymentId());
+        AnotherPaymentEvent anotherpaymentEvent = new AnotherPaymentEvent(
                 orderEvent.getPaymentId(),
                 orderEvent.getUserId(),     
                 orderEvent.getOrderId(),      
                 payment.getTotalprice(),
                 paymentState);
 
-        System.out.println(paymentEvent);
-        return Mono.fromSupplier(() -> paymentEvent);
+        return Mono.fromSupplier(() -> anotherpaymentEvent);
     }
 
     

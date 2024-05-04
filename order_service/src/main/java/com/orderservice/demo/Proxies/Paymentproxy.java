@@ -1,4 +1,4 @@
-package com.paymentservice.demo.Proxies;
+package com.orderservice.demo.Proxies;
 import com.orderservice.demo.Entities.Payment;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Bean;

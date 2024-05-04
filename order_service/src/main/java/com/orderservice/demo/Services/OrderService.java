@@ -11,9 +11,11 @@ import com.dtos.demo.events.AnotherPaymentEvent;
 
 import com.dtos.demo.events.UserBalanceState;
 import com.orderservice.demo.Entities.Order;
+import com.orderservice.demo.Entities.Payment;
 import com.orderservice.demo.Entities.Product;
 
 import com.orderservice.demo.Proxies.Productproxy;
+import com.orderservice.demo.Proxies.Paymentproxy;
 import com.orderservice.demo.Proxies.Userproxy;
 import com.orderservice.demo.Repositories.OrderRepository;
 import com.orderservice.demo.Entities.User;
@@ -31,6 +33,8 @@ public class OrderService {
     //Product proxy injection
     @Autowired
     private Productproxy productproxy;
+    @Autowired
+    private Paymentproxy paymentproxy;
 
     @Autowired
     private Userproxy userproxy;
@@ -87,12 +91,15 @@ public class OrderService {
         System.out.println("++++++++++++++++++++++++++++++++");
         System.out.println(payment.getOrderId());
         System.out.println("++++++++++++++++++++++++++++++++");
-        long orderId = 4L;
-
+        long orderId = payment.getOrderId();
+        System.out.println("++++++++++++++++++++++++++++++++");
+        System.out.println(payment.getPaymentId());
+        System.out.println("++++++++++++++++++++++++++++++++");
+        Payment payment1=paymentproxy.getPaymentByid(payment.getOrderId());
         Optional<Order> newOrder = orderRepository.findById(orderId);
         if(newOrder.isPresent()){
          
-            OrderState newOrderState = payment.getPaymentState().equals(PaymentState.SUCCESSFULL)  ?
+            OrderState newOrderState = payment1.getPaymentState().equals(PaymentState.SUCCESSFULL)  ?
                     OrderState.CREATED : OrderState.FAILED;
             System.out.println(newOrderState);
             newOrder.get().setOrderState(newOrderState);
