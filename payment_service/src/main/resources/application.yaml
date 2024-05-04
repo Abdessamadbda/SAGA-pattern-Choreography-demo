@@ -3,7 +3,7 @@ spring:
     stream:
       function:
         # Define the supplier and the consumer to use by the order service
-        definition: paymentSupplier;userEventConsumer;orderEventProcessor
+        definition: paymentSupplier;userEventConsumer;anotherorderEventProcessor
       bindings:
         # Define the supplier as an output of the event
         paymentSupplier-out-0:
@@ -13,7 +13,10 @@ spring:
         userEventConsumer-in-0:
           # Kafka topic or the channel name to receive the event from (Any name you want, needs to be meaningful)
           destination: user-event
-        orderEventProcessor-in-1:
-          destination: order-event
-        orderEventProcessor-out-1:
+        anotherorderEventProcessor-in-0:
+          destination: another-order-event
+        anotherorderEventProcessor-out-0:
           destination: payment-event
+
+
+

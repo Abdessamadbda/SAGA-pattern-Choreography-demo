@@ -1,7 +1,8 @@
 package com.paymentservice.demo.Config;
 
-import com.dtos.demo.events.OrderEvent;
+import com.dtos.demo.events.AnotherOrderEvent;
 import com.dtos.demo.events.PaymentEvent;
+import com.dtos.demo.events.AnotherPaymentEvent;
 import com.dtos.demo.events.PaymentState;
 import com.paymentservice.demo.Entities.Payment;
 import com.paymentservice.demo.Repositories.PaymentRepository;
@@ -21,22 +22,26 @@ public class OrderEventResponderConfig {
     
 
     @Bean
-    public Function<Flux<OrderEvent>, Flux<PaymentEvent>> orderEventProcessor() {
-        return orderEventFlux -> orderEventFlux.flatMap(this::paymentCheck);
+    public Function<Flux<AnotherOrderEvent>, Flux<AnotherPaymentEvent>> anotherorderEventProcessor() {
+        return anotherorderEventFlux -> anotherorderEventFlux.flatMap(this::paymentCheck);
     }
 
-    private Mono<PaymentEvent> paymentCheck(OrderEvent orderEvent){
+    private Mono<AnotherPaymentEvent> paymentCheck(AnotherOrderEvent orderEvent){
         Payment payment = paymentRepository.findById(orderEvent.getPaymentId()).get();
         PaymentState paymentState = (payment.getPaymentState().equals(PaymentState.SUCCESSFULL))
                 ? PaymentState.SUCCESSFULL : PaymentState.FAILED;
-        
-        PaymentEvent paymentEvent = new PaymentEvent(
+        System.out.println(payment.getPaymentState());
+        AnotherPaymentEvent paymentEvent = new AnotherPaymentEvent(
                 orderEvent.getPaymentId(),
                 orderEvent.getUserId(),     
                 orderEvent.getOrderId(),      
                 payment.getTotalprice(),
                 paymentState);
+
+        System.out.println(paymentEvent);
         return Mono.fromSupplier(() -> paymentEvent);
     }
+
+    
 
 }

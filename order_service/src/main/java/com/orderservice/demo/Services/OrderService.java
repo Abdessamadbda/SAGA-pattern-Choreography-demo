@@ -7,10 +7,12 @@ import com.dtos.demo.events.PaymentState;
 import com.dtos.demo.events.ProductEvent;
 
 import com.dtos.demo.events.PaymentEvent;
+import com.dtos.demo.events.AnotherPaymentEvent;
 
 import com.dtos.demo.events.UserBalanceState;
 import com.orderservice.demo.Entities.Order;
 import com.orderservice.demo.Entities.Product;
+
 import com.orderservice.demo.Proxies.Productproxy;
 import com.orderservice.demo.Proxies.Userproxy;
 import com.orderservice.demo.Repositories.OrderRepository;
@@ -42,6 +44,8 @@ public class OrderService {
     //Inject the order publisher, which will publish the order event
     @Autowired
     private OrderPublisher orderPublisher;
+    @Autowired
+    private AnotherOrderPublisher anotherOrderPublisher;
     
     public Order saveOrderInDB(long userId,long paymentId, long prodId, int qnt){
 
@@ -59,7 +63,9 @@ public class OrderService {
         orderRepository.save(newOrder);
         // Publish the orderEvent to the product service
         orderPublisher.publishOrderEvent(newOrder, prodId,user.getId(), qnt,paymentId);
+        anotherOrderPublisher.publishOrderEvent(newOrder,user.getId(), prodId, qnt,paymentId);
         return newOrder;
+        
     }
 
     public void updateOrder(ProductEvent prdct){
@@ -77,21 +83,22 @@ public class OrderService {
 
         }
     }
-    public void updateOrderPayment(PaymentEvent payment){
+    public void updateOrderPayment(AnotherPaymentEvent payment){
+        System.out.println("++++++++++++++++++++++++++++++++");
+        System.out.println(payment.getOrderId());
+        System.out.println("++++++++++++++++++++++++++++++++");
+        long orderId = 4L;
 
-        Optional<Order> optionalOrder = orderRepository.findById(payment.getOrderId());
-    
-    if (optionalOrder.isPresent()) {
-        Order order = optionalOrder.get();
+        Optional<Order> newOrder = orderRepository.findById(orderId);
+        if(newOrder.isPresent()){
+         
+            OrderState newOrderState = payment.getPaymentState().equals(PaymentState.SUCCESSFULL)  ?
+                    OrderState.CREATED : OrderState.FAILED;
+            System.out.println(newOrderState);
+            newOrder.get().setOrderState(newOrderState);
+            orderRepository.save(newOrder.get());
 
-        if (payment.getPaymentState().equals(PaymentState.SUCCESSFULL)) {
-            order.setOrderState(OrderState.CREATED);
-        } else {
-            order.setOrderState(OrderState.FAILED);
         }
-
-        orderRepository.save(order);
-    }
     }
 
 

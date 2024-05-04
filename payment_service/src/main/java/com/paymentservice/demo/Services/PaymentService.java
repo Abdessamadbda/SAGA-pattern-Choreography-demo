@@ -63,7 +63,7 @@ public class PaymentService {
             System.out.println("++++++++++++++++++++++++++++++++");
             PaymentState newPaymentState = user.getBalanceAvailability().equals(UserBalanceState.AVAILABLE) ?
                     PaymentState.SUCCESSFULL : PaymentState.FAILED;
-
+            System.out.println(newPaymentState);
             newPayment.get().setPaymentState(newPaymentState);
             paymentRepository.save(newPayment.get());
 
